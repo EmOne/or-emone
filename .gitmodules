@@ -1,0 +1,6 @@
+[submodule "openremote"]
+	path = openremote
+	url = https://github.com/emone/openremote.git
+	branch = master
+[submodule "openremote/"]
+	url = https://github.com/openremote/openremote.git

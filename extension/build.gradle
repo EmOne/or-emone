@@ -1,0 +1,27 @@
+apply plugin: "java"
+apply plugin: "groovy"
+
+dependencies {
+    // Agent and protocol SPI - Uncomment if adding custom `agent` code to your custom project
+    compile project(":agent")
+
+    // Setup SPI
+    compile project(":openremote:manager")
+
+    // Your own dependencies
+    // compile "org.slf4j:slf4j-api:$slf4jVersion"
+
+    // Testing API
+    testCompile project(":openremote:test")
+}
+
+test {
+    // Tests should always execute in the openremote main repo root directory
+    workingDir = project(":openremote").projectDir
+}
+
+// Automatically copy this extension into the deployment/extensions/ directory
+task installDist(type: Copy) {
+    from jar.outputs
+    into "${project(':deployment').buildDir}/manager/extensions"
+}

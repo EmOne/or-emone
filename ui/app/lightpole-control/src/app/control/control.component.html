@@ -1,0 +1,32 @@
+<p>control works!</p>
+<table border="1px">
+  <thead>
+    <td>#</td>
+    <td>Status</td>
+    <td>Control</td>
+  </thead>
+  <tbody>
+<tr *ngFor="let lp of lightPoles">
+  <td>{{ lp.name }}</td>
+  <td>{{ lp.status }}</td>
+  <td>
+    <div>
+      <mat-radio-group [name]=lp.name>
+        <mat-radio-button [value]=0 [checked]='lp.select === 0' (change)="onSelectionChange(lp)">
+          <mat-button-toggle-group name="fontStyle" >
+            <mat-button-toggle value="on">ON</mat-button-toggle>
+            <mat-button-toggle value="off">OFF</mat-button-toggle>
+          </mat-button-toggle-group>
+        </mat-radio-button>
+        <mat-radio-button [value]=1 [checked]="lp.select === 1" (change)="onSelectionChange(lp)">
+          <button mat-button (click)="openDialog()">Schedule</button></mat-radio-button>
+        <mat-radio-button [value]=2 [checked]="lp.select === 2" (change)="onSelectionChange(lp)">
+          <mat-slider thumbLabel [displayWith]="formatLabel"></mat-slider>
+        </mat-radio-button>
+        <mat-radio-button [value]=3 [checked]="lp.select === 3" (change)="onSelectionChange(lp)">Manual</mat-radio-button>
+      </mat-radio-group>
+    </div>
+  </td>
+</tr>
+</tbody>
+</table>

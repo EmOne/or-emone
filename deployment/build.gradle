@@ -1,0 +1,40 @@
+apply plugin: 'idea'
+idea {
+    module {
+        excludeDirs += file("manager/app")
+        excludeDirs += file("keycloak")
+        excludeDirs += file("manager/extensions")
+        excludeDirs += file("manager/shared")
+    }
+}
+
+task copyKeycloakThemes(type: Copy) {
+    dependsOn resolveTask(":ui:keycloak:installDist")
+    from "${resolveProject(':deployment').projectDir}/keycloak"
+    into "keycloak"
+}
+
+task copyManagerApp(type: Copy) {
+    dependsOn resolveTask(":client:installDist")
+    from "${resolveProject(':deployment').projectDir}/manager/app/manager"
+    into "manager/app/manager"
+}
+
+task copyManagerShared(type: Copy) {
+    from "${resolveProject(':deployment').projectDir}/manager/shared"
+    into "manager/shared"
+}
+
+task clean() {
+    doLast {
+        delete "manager/app/manager"
+        delete "manager/shared"
+        delete "manager/extensions"
+        delete "keycloak"
+    }
+}
+
+task installDist(type: Copy) {
+    dependsOn copyKeycloakThemes, copyManagerApp, copyManagerShared
+}
+

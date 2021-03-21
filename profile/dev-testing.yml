@@ -1,0 +1,36 @@
+#
+# Profile for doing IDE development work and running build tests.
+#
+# Run this in the background for full ./gradlew clean build
+#
+version: '2.4'
+
+volumes:
+  postgresql-data:
+
+services:
+
+  keycloak:
+    extends:
+      file: ../openremote/profile/deploy.yml
+      service: keycloak
+    volumes:
+      - ../openremote/ui/keycloak/themes:/deployment/keycloak/themes
+      - ../ui/keycloak/themes:/deployment/keycloak/customthemes
+    # Access directly if needed on localhost
+    ports:
+      - "8081:8080"
+    depends_on:
+      postgresql:
+        condition: service_healthy
+
+  postgresql:
+    extends:
+      file: ../openremote/profile/deploy.yml
+      service: postgresql
+    # Access directly if needed on localhost
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+
