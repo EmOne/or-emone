@@ -1,6 +1,7 @@
 import { Time } from "@angular/common";
 import { ThemePalette } from "@angular/material/core";
 import { ControlMethod } from "./ControlMethod.enum";
+import { InMemoryDbService } from 'angular-in-memory-web-api';
 
 export interface Schedule {
   name: string;
@@ -25,6 +26,7 @@ export interface Remote {
 
 export interface LightPole {
   id: number;
+  devaddr: string;
   name: string;
   status: boolean;
   select: ControlMethod;
@@ -38,55 +40,67 @@ export const LightPoles: LightPole[] =
 [
     {
       id: 0,
+      devaddr: "27F36B6B",
       name: "LP1",
       status: true,
       select: ControlMethod.REMOTE,
       method: {
         remote: {
-          switch: true
+          switch: true,
         },
       },
     },
     {
       id: 1,
+      devaddr: "00004090",
       name: "LP2",
       status: true,
-      select: ControlMethod.SCHEDULE,
+      select: ControlMethod.REMOTE,
       method: {
         remote: {
           switch: true ,
-          schedule: {
-            name: "all",
-            completed: false,
-            color: "primary",
-            start_time: { hours: 10, minutes: 30 },
-            end_time: { hours: 11, minutes: 30 },
-            dayofweek: []
-          }
+          // schedule: {
+          //   name: "all",
+          //   completed: false,
+          //   color: "primary",
+          //   start_time: { hours: 10, minutes: 30 },
+          //   end_time: { hours: 11, minutes: 30 },
+          //   dayofweek: []
+          // }
         }
       }
     },
     {
       id: 2,
+      devaddr: "00004145",
       name: "LP3",
       status: true,
-      select: ControlMethod.INTENSITY,
+      select: ControlMethod.REMOTE,
       method: {
         remote: {
           switch: true,
-          intensity: {
-            level: 80
-          }
+          // intensity: {
+          //   level: 80
+          // }
         }
       },
     },
     {
       id: 3,
+      devaddr: "00004145",
       name: "LP4",
-      status: false,
-      select: ControlMethod.MANUAL,
+      status: true,
+      select: ControlMethod.REMOTE,
       method: {
-        manual: false
+        remote: {
+          switch: true,
+        },
+        // manual: false
       }
     },
 ];
+
+export const IP_SERVER: string = "172.17.13.64";
+export const PORT: string = "1883";
+export const SUB_TOPIC: string = "/v1/tns/devices/#";
+export const PUB_TOPIC: string = "/v1/tns/devices/me/rpc/request/";

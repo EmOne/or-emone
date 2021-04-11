@@ -1,12 +1,32 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { Schedule, LightPole, LightPoles } from '../lightpole';
-import { ControlMethod } from "../ControlMethod.enum";
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import { Schedule, LightPole, LightPoles, IP_SERVER, PORT, SUB_TOPIC, PUB_TOPIC } from '../lightpole';
+// import { ControlMethod } from "../ControlMethod.enum";
+// import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import { MatCheckbox } from '@angular/material/checkbox';
-import { MatStartDate, MatDateRangeInput, MatEndDate} from '@angular/material/datepicker';
-import { MatInput } from '@angular/material/input';
+// import { MatCheckbox } from '@angular/material/checkbox';
+// import { MatStartDate, MatDateRangeInput, MatEndDate} from '@angular/material/datepicker';
+// import { MatInput } from '@angular/material/input';
+import { EventMqttService } from '../service/event.mqtt.service';
+import { MqttClient, IClientOptions } from 'mqtt';
+import * as mqtt from 'mqtt';
+// import { WebsocketService } from '../service/websocket.service';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http'
+import { HttpHeaders } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, retry } from 'rxjs/operators';
+// import { MQTTService } from 'ionic-mqtt';
+import { webSocket } from "rxjs/webSocket";
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Content-Type':  'application/json',
+    'Authorization': 'Basic ' + btoa('admin:admin')
+  }),
 
+};
+
+// const clientOption:IClientOptions = {
+//   host:
+// }
 
 @Component({
   selector: 'app-control',
@@ -17,9 +37,22 @@ export class ControlComponent implements OnInit {
 
   lightPoles = LightPoles;
   selectedEntry: any;
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog,
+    private http: HttpClient) {
+
+  //  this.mq = mqtt.connect("mqtt://172.17.13.64:1883");
+  }
 
   ngOnInit(): void {
+
+    // this.mq.on('connect', function () {
+    //   console.log('mqtt connected');
+    //  });
+
+    // this.mq.on('message', function (topic, message) {
+    //   // message is Buffer
+    //   console.log(message.toString())
+    // })
   }
 
   onSelectionChange(lp:LightPole) {
@@ -46,6 +79,45 @@ export class ControlComponent implements OnInit {
     });
   }
 
+  onClickTurnOn(devid: string)  : Observable<any>{
+    console.log('Turn ON :' + devid);
+    let url = "http://172.17.13.64:8088" + PUB_TOPIC + devid;
+    let downlink = '{"devaddr":' + devid + ', "port": 2, "data":"00"}';
+    // this.mq.publish(PUB_TOPIC + devid, downlink);
+    return this.http.put<any>(url,
+                  downlink, httpOptions).pipe(
+                    retry(3),
+                    catchError(this.handleError)
+                    );
+  }
+
+  onClickTurnOff(devid: string) : Observable<any>{
+    console.log('Turn OFF :' + devid);
+    let url = "http://172.17.13.64:8088" + PUB_TOPIC + devid;
+    let downlink = '{"devaddr":' + devid + ', "port": 2, "data":"0F"}';
+    // this.mq.publish(PUB_TOPIC + devid, downlink);
+    return this.http.put<any>(url,
+                  downlink, httpOptions).pipe(
+                    retry(3),
+                    catchError(this.handleError)
+                  );
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    if (error.error instanceof ErrorEvent) {
+      // A client-side or network error occurred. Handle it accordingly.
+      console.error('An error occurred:', error.error.message);
+    } else {
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong.
+      console.error(
+        `Backend returned code ${error.status}, ` +
+        `body was: ${error.error}`);
+    }
+    // Return an observable with a user-facing error message.
+    return throwError(
+      'Something bad happened; please try again later.');
+  }
 }
 
 @Component({
@@ -100,6 +172,8 @@ export class ScheduleDialog {
     }
     this.schedule.dayofweek.forEach(t => t.completed = completed);
   }
+
+
 }
 
 

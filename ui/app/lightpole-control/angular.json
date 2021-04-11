@@ -125,6 +125,18 @@
               "devServerTarget": "lightpole-control:serve:production"
             }
           }
+        },
+        "build-webpack": {
+          "builder": "@angular-devkit/build-webpack:webpack",
+          "options": {
+            "webpackConfig": "webpack.config.js"
+          }
+        },
+        "serve-webpack": {
+          "builder": "@angular-devkit/build-webpack:webpack-dev-server",
+          "options": {
+            "webpackConfig": "webpack.config.js"
+          }
         }
       }
     }
