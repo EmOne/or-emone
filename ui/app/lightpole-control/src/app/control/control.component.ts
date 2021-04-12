@@ -20,8 +20,12 @@ const httpOptions = {
   headers: new HttpHeaders({
     'Content-Type':  'application/json',
     'Authorization': 'Basic ' + btoa('admin:admin'),
-    // 'access-control-allow-origin': '*',
-    // "access-control-allow-headers":"content-type"
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Allow-Methods': 'OPTIONS, GET, PUT, POST, DELETE',
+    'Access-Control-Allow-Headers': 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization',
+    // 'access-control-expose-headers':"x-total-count",
+    // 'content-security-policy':"default-src * data: 'unsafe-inline' 'unsafe-eval';"
   }),
   // observe:'event',
   reportProgress: true,
@@ -87,9 +91,9 @@ export class ControlComponent implements OnInit {
   onClickTurnOn(devid: string){
     console.log('Turn ON :' + devid);
     let url = "http://172.17.13.64:8088" + PUB_TOPIC + devid;
-    let downlink = {"devaddr": devid, "port": 2, "data":"00"};
+    let downlink = '{"devaddr":"' + devid + '", "port": 2, "data":"00"}';
     // this.mq.publish(PUB_TOPIC + devid, downlink);
-    this.http.post<any>(url,
+    this.http.post(url,
                   downlink, httpOptions)
                   // .pipe(
                   // //   retry(3),
@@ -109,9 +113,9 @@ export class ControlComponent implements OnInit {
   onClickTurnOff(devid: string) {
     console.log('Turn OFF :' + devid);
     let url = "http://172.17.13.64:8088" + PUB_TOPIC + devid;
-    let downlink = {"devaddr":devid, "port": 2, "data":"0F"};
+    let downlink = '{"devaddr":"' + devid + '", "port": 2, "data":"0F"}';
     // this.mq.publish(PUB_TOPIC + devid, downlink);
-    this.http.post<any>(url,
+    this.http.post(url,
                   downlink, httpOptions)
                   // .pipe(
                   // //   retry(3),
