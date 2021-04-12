@@ -50,8 +50,6 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatTreeModule} from '@angular/material/tree';
 import {OverlayModule} from '@angular/cdk/overlay';
-import { environment as env } from '../environments/environment';
-// import { IonicMqttModule, MQTTService } from 'ionic-mqtt';
 
 @NgModule({
   declarations: [AppComponent, ControlComponent, ScheduleDialog],
@@ -106,10 +104,10 @@ import { environment as env } from '../environments/environment';
     OverlayModule,
     PortalModule,
     ScrollingModule,
-    // IonicMqttModule,
+
   ],
   providers: [
-    // MQTTService
+
   ],
   bootstrap: [AppComponent],
 })

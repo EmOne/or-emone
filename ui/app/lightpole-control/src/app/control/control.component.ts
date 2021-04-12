@@ -10,8 +10,8 @@ import { EventMqttService } from '../service/event.mqtt.service';
 import { MqttClient, IClientOptions } from 'mqtt';
 import * as mqtt from 'mqtt';
 // import { WebsocketService } from '../service/websocket.service';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http'
-import { HttpHeaders } from '@angular/common/http';
+
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 // import { MQTTService } from 'ionic-mqtt';
@@ -19,9 +19,13 @@ import { webSocket } from "rxjs/webSocket";
 const httpOptions = {
   headers: new HttpHeaders({
     'Content-Type':  'application/json',
-    'Authorization': 'Basic ' + btoa('admin:admin')
+    'Authorization': 'Basic ' + btoa('admin:admin'),
+    'access-control-allow-origin': '*',
+    "access-control-allow-headers":"content-type"
   }),
-
+  // observe:'event',
+  reportProgress: true,
+  // responseType: 'json'
 };
 
 // const clientOption:IClientOptions = {
@@ -35,6 +39,7 @@ const httpOptions = {
 })
 export class ControlComponent implements OnInit {
 
+  errorMessage = "";
   lightPoles = LightPoles;
   selectedEntry: any;
   constructor(public dialog: MatDialog,
@@ -79,28 +84,48 @@ export class ControlComponent implements OnInit {
     });
   }
 
-  onClickTurnOn(devid: string)  : Observable<any>{
+  onClickTurnOn(devid: string){
     console.log('Turn ON :' + devid);
-    let url = "http://172.17.13.64:8088" + PUB_TOPIC + devid;
+    let url = "http://localhost:8088" + PUB_TOPIC + devid;
     let downlink = '{"devaddr":' + devid + ', "port": 2, "data":"00"}';
     // this.mq.publish(PUB_TOPIC + devid, downlink);
-    return this.http.put<any>(url,
-                  downlink, httpOptions).pipe(
-                    retry(3),
-                    catchError(this.handleError)
-                    );
+    this.http.post<any>(url,
+                  downlink, httpOptions)
+                  // .pipe(
+                  // //   retry(3),
+                  //   catchError(this.handleError)
+                  //   );
+                  .subscribe(
+                    {
+                      error: error => {
+                        this.errorMessage = error.message;
+                        console.error('There was an error!', error);
+                      }
+
+                    }
+                  )
   }
 
-  onClickTurnOff(devid: string) : Observable<any>{
+  onClickTurnOff(devid: string) {
     console.log('Turn OFF :' + devid);
-    let url = "http://172.17.13.64:8088" + PUB_TOPIC + devid;
+    let url = "http://localhost:8088" + PUB_TOPIC + devid;
     let downlink = '{"devaddr":' + devid + ', "port": 2, "data":"0F"}';
     // this.mq.publish(PUB_TOPIC + devid, downlink);
-    return this.http.put<any>(url,
-                  downlink, httpOptions).pipe(
-                    retry(3),
-                    catchError(this.handleError)
-                  );
+    this.http.post<any>(url,
+                  downlink, httpOptions)
+                  // .pipe(
+                  // //   retry(3),
+                  //   catchError(this.handleError)
+                  // );
+                  .subscribe(
+                    {
+                      error: error => {
+                        this.errorMessage = error.message;
+                        console.error('There was an error!', error);
+                      }
+
+                    }
+                  )
   }
 
   private handleError(error: HttpErrorResponse) {

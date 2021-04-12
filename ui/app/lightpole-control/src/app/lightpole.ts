@@ -87,7 +87,7 @@ export const LightPoles: LightPole[] =
     },
     {
       id: 3,
-      devaddr: "00004145",
+      devaddr: "00004051",
       name: "LP4",
       status: true,
       select: ControlMethod.REMOTE,
