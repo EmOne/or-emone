@@ -20,8 +20,8 @@ const httpOptions = {
   headers: new HttpHeaders({
     'Content-Type':  'application/json',
     'Authorization': 'Basic ' + btoa('admin:admin'),
-    'access-control-allow-origin': '*',
-    "access-control-allow-headers":"content-type"
+    // 'access-control-allow-origin': '*',
+    // "access-control-allow-headers":"content-type"
   }),
   // observe:'event',
   reportProgress: true,
@@ -86,8 +86,8 @@ export class ControlComponent implements OnInit {
 
   onClickTurnOn(devid: string){
     console.log('Turn ON :' + devid);
-    let url = "http://localhost:8088" + PUB_TOPIC + devid;
-    let downlink = '{"devaddr":' + devid + ', "port": 2, "data":"00"}';
+    let url = "http://172.17.13.64:8088" + PUB_TOPIC + devid;
+    let downlink = {"devaddr": devid, "port": 2, "data":"00"};
     // this.mq.publish(PUB_TOPIC + devid, downlink);
     this.http.post<any>(url,
                   downlink, httpOptions)
@@ -108,8 +108,8 @@ export class ControlComponent implements OnInit {
 
   onClickTurnOff(devid: string) {
     console.log('Turn OFF :' + devid);
-    let url = "http://localhost:8088" + PUB_TOPIC + devid;
-    let downlink = '{"devaddr":' + devid + ', "port": 2, "data":"0F"}';
+    let url = "http://172.17.13.64:8088" + PUB_TOPIC + devid;
+    let downlink = {"devaddr":devid, "port": 2, "data":"0F"};
     // this.mq.publish(PUB_TOPIC + devid, downlink);
     this.http.post<any>(url,
                   downlink, httpOptions)
